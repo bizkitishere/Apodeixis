@@ -3,4 +3,10 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="broker">Broker</string>
+    <string name="client_id">Client ID</string>
+    <string name="port">Port</string>
+    <string name="broker_hint">broker.mqttdashboard.com</string>
+    <string name="client_id_hint">Anything is ok</string>
+    <string name="port_hint">1883</string>
 </resources>

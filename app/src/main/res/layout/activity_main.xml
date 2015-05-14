@@ -19,4 +19,53 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="37dp" />
 
+    <TextView android:text="@string/broker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_broker"
+        android:layout_alignBaseline="@+id/et_broker"
+        android:layout_alignBottom="@+id/et_broker"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_broker"
+        android:hint="@string/broker_hint"
+        android:layout_marginTop="21dp"
+        android:layout_below="@android:id/list"
+        android:layout_alignEnd="@android:id/list" />
+
+    <TextView android:text="@string/client_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_client_id"
+        android:layout_alignBaseline="@+id/client_id"
+        android:layout_alignBottom="@+id/client_id"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/client_id"
+        android:hint="@string/client_id_hint"
+        android:layout_below="@+id/et_broker"
+        android:layout_alignStart="@+id/et_broker" />
+
+    <TextView android:text="@string/port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_port"
+        android:layout_alignBaseline="@+id/et_port"
+        android:layout_alignBottom="@+id/et_port"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_port"
+        android:hint="@string/port_hint"
+        android:layout_below="@+id/client_id"
+        android:layout_alignStart="@+id/client_id" />
+
 </RelativeLayout>

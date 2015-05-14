@@ -23,38 +23,6 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
-        MqttAndroidClient androidClient = new MqttAndroidClient(this, "broker.mqttdashboard.com", "id7");
-
-        final Context c = this;
-
-        try {
-            androidClient.connect();
-
-            androidClient.subscribe("App/test1", 1);
-
-            androidClient.setCallback(new MqttCallback() {
-                @Override
-                public void connectionLost(Throwable throwable) {
-                    //
-                }
-
-                @Override
-                public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-                    //send toast
-                    Toast.makeText(c, s, Toast.LENGTH_LONG);
-                }
-
-                @Override
-                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-        */
-
     }
 
 
