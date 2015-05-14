@@ -9,4 +9,5 @@
     <string name="broker_hint">broker.mqttdashboard.com</string>
     <string name="client_id_hint">Anything is ok</string>
     <string name="port_hint">1883</string>
+    <string name="connect">Connect</string>
 </resources>
