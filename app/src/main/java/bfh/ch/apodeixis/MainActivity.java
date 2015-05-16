@@ -89,12 +89,12 @@ public class MainActivity extends ListActivity {
             }
 
             @Override
-            public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
+            public void onFailure(IMqttToken iMqttToken, final Throwable throwable) {
                 //make toast
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(c, "Could not connect", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(c, throwable.getCause().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -121,7 +121,7 @@ public class MainActivity extends ListActivity {
                 EditText etBroker = (EditText) findViewById(R.id.et_broker);
                 EditText etPort = (EditText) findViewById(R.id.et_port);
 
-                String broker = etBroker.getText().toString();
+                String broker = "tcp://" + etBroker.getText().toString();
                 String port = etPort.getText().toString();
 
                 datBundle.putExtra((String.valueOf(R.id.et_broker)), broker);
@@ -135,7 +135,7 @@ public class MainActivity extends ListActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(c, "Published message", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(c, "Published: " + "message", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (MqttException e) {
