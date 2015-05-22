@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.GpsStatus;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,26 +28,47 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class MainActivity extends ListActivity {
 
+    private MediaPlayer mediaPlayer;
+    private final String USER = "apodeixisMQTTUser";
+    private final String PASS = "MQTTPass7";
+    //private final String BROKER = "tcp://broker.mqttdashboard.com";
+    private final String BROKER = "tcp://147.87.117.73";
+    private final String PORT = "1883";
+    private final String MQTT_BROKER = BROKER + ":" + PORT;
+    private final String TOPIC = "LabDem/Server2HW";
+
+    private String device_id = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String broker = "tcp://broker.mqttdashboard.com";
-        String port = "1883";
-
         MqttConnectOptions options = new MqttConnectOptions();
         options.setCleanSession(true);
+        options.setUserName(USER);
+        options.setPassword(PASS.toCharArray());
+
+        if(device_id == null) {
+            TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            device_id = tm.getDeviceId();
+        }
 
         final Context c = this.getApplicationContext();
 
-        final MqttAndroidClient client = new MqttAndroidClient(MainActivity.this, broker, "123");
+        final MqttAndroidClient client = new MqttAndroidClient(MainActivity.this, MQTT_BROKER, device_id);
 
         //callback, for when a message arrives
         client.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable throwable) {
-
+                //make toast
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(c, "Lost MQTT connection", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -59,13 +81,13 @@ public class MainActivity extends ListActivity {
                     }
                 });
 
-                MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.cough1);
+                mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.cough1);
                 mediaPlayer.start();
             }
 
             @Override
             public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-
+                //not used
             }
         });
 
@@ -82,7 +104,7 @@ public class MainActivity extends ListActivity {
                 });
 
                 try {
-                    client.subscribe("App/test", 2, null, null);
+                    client.subscribe(TOPIC, 1, null, null);
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }
