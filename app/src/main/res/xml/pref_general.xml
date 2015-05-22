@@ -1,0 +1,38 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <EditTextPreference
+        android:key="brokerKey"
+        android:title="@string/broker"
+        android:defaultValue="@string/pref_default_broker"
+        android:selectAllOnFocus="true"
+        android:inputType="textCapWords"
+        android:hint="192.168.1.1"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:maxLines="1" />
+    <EditTextPreference
+        android:key="portKey"
+        android:title="@string/port"
+        android:defaultValue="@string/pref_default_port"
+        android:selectAllOnFocus="true"
+        android:inputType="textCapWords"
+        android:capitalize="words"
+        android:hint="1883"
+        android:singleLine="true"
+        android:maxLines="1" />
+    <EditTextPreference
+        android:key="deviceNameKey"
+        android:title="@string/deviceName"
+        android:defaultValue="@string/pref_default_deviceName"
+        android:selectAllOnFocus="true"
+        android:inputType="textCapWords"
+        android:capitalize="words"
+        android:hint="android[Name]"
+        android:singleLine="true"
+        android:maxLines="1" />
+
+</PreferenceScreen>

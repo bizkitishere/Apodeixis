@@ -3,6 +3,7 @@ package bfh.ch.apodeixis;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 //import android.hardware.camera2.*;
@@ -11,6 +12,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v7.app.ActionBarActivity;
 import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,17 +33,19 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends ActionBarActivity {
 
     private MediaPlayer mediaPlayer;
     private final String USER = "apodeixisMQTTUser";
     private final String PASS = "MQTTPass7";
     //private final String BROKER = "tcp://broker.mqttdashboard.com";
-    private final String BROKER = "tcp://147.87.117.73";
-    private final String PORT = "1883";
-    private final String MQTT_BROKER = BROKER + ":" + PORT;
+    private String broker;
+    private  String port;
+    private  String device_name;
+    private  String mqtt_broker ;
     private final String TOPIC = "LabDem/Server2HW";
 
     private String device_id = null;
@@ -51,15 +55,14 @@ public class MainActivity extends ListActivity {
     private Parameters params;
     private Handler handler = new Handler();
 
+
+    private MqttAndroidClient client;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MqttConnectOptions options = new MqttConnectOptions();
-        options.setCleanSession(true);
-        options.setUserName(USER);
-        options.setPassword(PASS.toCharArray());
+
 
         if(device_id == null) {
             TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -68,7 +71,116 @@ public class MainActivity extends ListActivity {
 
         c = this.getApplicationContext();
 
-        final MqttAndroidClient client = new MqttAndroidClient(MainActivity.this, MQTT_BROKER, device_id);
+
+
+
+        /*
+        final Button button = (Button) findViewById(R.id.btn_connect);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //read user data
+                //
+                //
+                //
+                //
+                loadPreferences();
+                mqtt_broker = broker + ":" + port;
+                MqttConnectOptions options = new MqttConnectOptions();
+                options.setCleanSession(true);
+                options.setUserName(USER);
+                options.setPassword(PASS.toCharArray());
+
+
+            }
+        });
+        */
+
+
+
+
+    }
+
+
+    protected void turnFlashOnFor(int time) {
+        camera = Camera.open();
+        params = camera.getParameters();
+        params.setFlashMode(Parameters.FLASH_MODE_TORCH);
+        camera.setParameters(params);
+        camera.startPreview();
+
+
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                camera.stopPreview();
+                camera.release();
+            }
+        }, time);//falsh is on for flashtime, after it stop the preview
+
+    }
+
+    protected void playSoundWithName(String soundName){
+        int file=-1;
+        switch (soundName){
+            case "cough1":
+                file=R.raw.cough1;
+
+                break;
+            case "cough2":
+                file=R.raw.cough2;
+                break;
+            default:
+                Toast.makeText(c, "Sound "+soundName+" is not implemented", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        if(file != -1) {
+            mediaPlayer = MediaPlayer.create(MainActivity.this, file);
+            mediaPlayer.start();
+        }
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            startSettingsActivity();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void startSettingsActivity() {
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(intent);
+
+    }
+
+
+    public void connectToMqtt(View v){
+        loadPreferences();
+        mqtt_broker = broker + ":" + port;
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setCleanSession(true);
+        options.setUserName(USER);
+        options.setPassword(PASS.toCharArray());
+
+        client = new MqttAndroidClient(MainActivity.this, mqtt_broker, device_id);
 
         //callback, for when a message arrives
         client.setCallback(new MqttCallback() {
@@ -94,13 +206,13 @@ public class MainActivity extends ListActivity {
                 });
 
                 String tokens[] = mqttMessage.toString().split(";");
-                String deviceName="androidElia";
+
                 //check the hardware type, android device has type 3
                 if (!tokens[0].equals("3")){
                     return;
                 }
                 //check the device name
-                if (!tokens[1].equals(deviceName)){
+                if (!tokens[1].equals(device_name)){
                     return;
                 }
                 switch (tokens[2]){
@@ -161,116 +273,19 @@ public class MainActivity extends ListActivity {
                 });
             }
         };
-
-
-
-
-
         try {
             client.connect(options, null, listener);
         } catch (MqttException e) {
             e.printStackTrace();
         }
 
-        final Button button = (Button) findViewById(R.id.btn_connect);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //read user data
-
-                /*
-                Intent datBundle = new Intent();
-
-                EditText etBroker = (EditText) findViewById(R.id.et_broker);
-                EditText etPort = (EditText) findViewById(R.id.et_port);
-
-                String broker = "tcp://" + etBroker.getText().toString();
-                String port = etPort.getText().toString();
-
-                datBundle.putExtra((String.valueOf(R.id.et_broker)), broker);
-                datBundle.putExtra((String.valueOf(R.id.et_port)), port);
-                */
-
-
-                try {
-                    client.publish("App/test", "message".getBytes(), 1, false);
-                    //send toast
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(c, "Published: " + "message", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-
-
-
     }
 
 
-    private void turnFlashOnFor(int time) {
-        camera = Camera.open();
-        params = camera.getParameters();
-        params.setFlashMode(Parameters.FLASH_MODE_TORCH);
-        camera.setParameters(params);
-        camera.startPreview();
-
-
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                camera.stopPreview();
-                camera.release();
-            }
-        }, time);//falsh is on for flashtime, after it stop the preview
-
-    }
-
-    private void playSoundWithName(String soundName){
-        int file=-1;
-        switch (soundName){
-            case "cough1":
-                file=R.raw.cough1;
-
-                break;
-            case "cough2":
-                file=R.raw.cough2;
-                break;
-            default:
-                Toast.makeText(c, "Sound "+soundName+" is not implemented", Toast.LENGTH_SHORT).show();
-                break;
-        }
-
-        if(file != -1) {
-            mediaPlayer = MediaPlayer.create(MainActivity.this, file);
-            mediaPlayer.start();
-        }
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    private void loadPreferences(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        broker= "tcp://"+prefs.getString("brokerKey", "@string/pref_default_broker");
+        port= prefs.getString("portKey", "@string/pref_default_port");
+        device_name= prefs.getString("deviceNameKey", "@string/pref_default_deviceName");
     }
 }
