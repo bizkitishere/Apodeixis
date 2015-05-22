@@ -11,14 +11,6 @@
     <string name="port_hint">1883</string>
     <string name="connect">Connect</string>
     <string name="deviceName">Device name</string>
+    <string name="reset_to_default">Reset to default</string>
 
-
-    <!--<string name="pref_title_display_broker">Broker</string>-->
-    <string name="pref_default_broker">147.87.117.73</string>
-
-    <!--<string name="pref_title_display_port">Port</string>-->
-    <string name="pref_default_port">1883</string>
-
-    <!--<string name="pref_title_display_deviceName">Device name</string>-->
-    <string name="pref_default_deviceName">androidName</string>
 </resources>

@@ -46,6 +46,20 @@ public class SettingsActivity extends PreferenceActivity {
         super.onPostCreate(savedInstanceState);
 
         setupSimplePreferencesScreen();
+
+        /*
+        //could be used to reset to defaults, but did not work...
+        Preference myPref = (Preference) findPreference("reset2default");
+        myPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                //open browser or intent here
+
+                return false;
+            }
+        });
+        */
+
     }
 
     /**
@@ -62,8 +76,14 @@ public class SettingsActivity extends PreferenceActivity {
         // use the older PreferenceActivity APIs.
 
         // Add 'general' preferences.
+        //addPreferencesFromResource(R.xml.pref_general);
+        //PreferenceCategory fakeHeader = new PreferenceCategory(this);
+        //fakeHeader.setTitle("Settings");
+        //getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_general);
 
+
+        /*
         // Add 'notifications' preferences, and a corresponding header.
         PreferenceCategory fakeHeader = new PreferenceCategory(this);
         fakeHeader.setTitle(R.string.pref_header_notifications);
@@ -75,15 +95,18 @@ public class SettingsActivity extends PreferenceActivity {
         fakeHeader.setTitle(R.string.pref_header_data_sync);
         getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_data_sync);
+        */
 
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences to
         // their values. When their values change, their summaries are updated
         // to reflect the new value, per the Android Design guidelines.
+
         bindPreferenceSummaryToValue(findPreference("brokerKey"));
         bindPreferenceSummaryToValue(findPreference("portKey"));
         bindPreferenceSummaryToValue(findPreference("deviceNameKey"));
+
         //bindPreferenceSummaryToValue(findPreference("example_list"));
-        bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+        //bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
         //bindPreferenceSummaryToValue(findPreference("sync_frequency"));
     }
 

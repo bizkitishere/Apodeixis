@@ -13,45 +13,25 @@
         android:textStyle="bold"
         android:nestedScrollingEnabled="false"
         android:onClick="connectToMqtt"
-        android:layout_below="@+id/textView4"
-        android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/textView4" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text asdjhsajkd sajdjsajdjksa adkakldjlkaslkjda askdsakls ad sad afdsfdsfds ds f ds fsd  ass d kfjsd fds fdskf dsfds fkds fdskas d sald asd asldasd sadld  adlsad as d"
-        android:id="@+id/textView2"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Errors"
-        android:id="@+id/textView"
-        android:layout_above="@+id/textView2"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Messages"
-        android:id="@+id/textView3"
         android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="81dp"
         android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="this is a very long message, replace the tost sadnasmndasmnd as dmsadnasmnd samdnsand asdm asn dams dans dmsadmasm d as"
-        android:id="@+id/textView4"
-        android:layout_below="@+id/textView3"
-        android:layout_alignParentStart="true" />
+        android:id="@+id/tv_message"
+        android:textAlignment="center"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_alignTop="@+id/btn_connect"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -59,10 +39,10 @@
         android:text="Disconnect"
         android:onClick="disconnectFromMqtt"
         android:id="@+id/btn_disconnect"
+        android:visibility="invisible"
         android:layout_alignTop="@+id/btn_connect"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/btn_connect"
-        android:visibility="invisible" />
+        android:layout_alignEnd="@+id/btn_connect" />
 
 
 </RelativeLayout>
