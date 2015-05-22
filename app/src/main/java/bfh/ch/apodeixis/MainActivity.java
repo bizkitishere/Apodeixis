@@ -3,6 +3,9 @@ package bfh.ch.apodeixis;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+//import android.graphics.Camera;
+import android.graphics.Camera;
+import android.hardware.camera2.*;
 import android.location.GpsStatus;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -25,6 +28,8 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import android.os.Vibrator;
+
 
 public class MainActivity extends ListActivity {
 
@@ -38,6 +43,8 @@ public class MainActivity extends ListActivity {
     private final String TOPIC = "LabDem/Server2HW";
 
     private String device_id = null;
+
+    private CameraDevice camera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,11 +88,53 @@ public class MainActivity extends ListActivity {
                     }
                 });
 
-                String tokens[] = mqttMessage.toString().split("/");
-                //System.out.println("Splitstring  " + result);
+                String tokens[] = mqttMessage.toString().split(";");
+                String deviceName="androidElia";
+                //check the hardware type, android device has type 3
+                if (!tokens[0].equals("3")){
+                    return;
+                }
+                //check the device name
+                if (!tokens[1].equals(deviceName)){
+                    return;
+                }
+                switch (tokens[2]){
+                    case "sound":
+                        switch (tokens[3]){
+                            case "cough1":
+                                mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.cough1);
+                                mediaPlayer.start();
+                                break;
+                            case "cough2":
+                                mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.cough2);
+                                mediaPlayer.start();
+                                break;
+                            default:
+                                Toast.makeText(c, "Sound "+tokens[3]+" is not implemented", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                        break;
+                    case "vibrate":
+                        Vibrator v = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
+                        int vibrationTime = Integer.parseInt(tokens[3]);
+                        // Vibrate for vibrationTime milliseconds
+                        v.vibrate(vibrationTime);
+                        break;
+                    case "flashlight":
+/*
+                        android.hardware.Camera.Parameters p = camera.getParameters();
+                        p.setFlashMode(android.hardware.Camera.Parameters.FLASH_MODE_TORCH);
+                        camera.setParameters(p);
+                        camera.startPreview();
+                        */
+                        break;
+                    default:
+                        Toast.makeText(c, "Action "+tokens[2]+" is not implemented", Toast.LENGTH_SHORT).show();
+                        break;
 
-                mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.cough1);
-                mediaPlayer.start();
+                }
+
+
             }
 
             @Override
