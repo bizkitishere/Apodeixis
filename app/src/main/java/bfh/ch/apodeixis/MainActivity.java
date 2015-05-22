@@ -45,6 +45,7 @@ public class MainActivity extends ListActivity {
     private final String TOPIC = "LabDem/Server2HW";
 
     private String device_id = null;
+    private Context c;
 
     private Camera camera;
     private Parameters params;
@@ -65,7 +66,7 @@ public class MainActivity extends ListActivity {
             device_id = tm.getDeviceId();
         }
 
-        final Context c = this.getApplicationContext();
+        c = this.getApplicationContext();
 
         final MqttAndroidClient client = new MqttAndroidClient(MainActivity.this, MQTT_BROKER, device_id);
 
@@ -104,19 +105,7 @@ public class MainActivity extends ListActivity {
                 }
                 switch (tokens[2]){
                     case "sound":
-                        switch (tokens[3]){
-                            case "cough1":
-                                mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.cough1);
-                                mediaPlayer.start();
-                                break;
-                            case "cough2":
-                                mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.cough2);
-                                mediaPlayer.start();
-                                break;
-                            default:
-                                Toast.makeText(c, "Sound "+tokens[3]+" is not implemented", Toast.LENGTH_SHORT).show();
-                                break;
-                        }
+                        playSoundWithName(tokens[3]);
                         break;
                     case "vibrate":
                         Vibrator v = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
@@ -125,31 +114,14 @@ public class MainActivity extends ListActivity {
                         v.vibrate(vibrationTime);
                         break;
                     case "flashlight":
-                        camera = Camera.open();
-                        params = camera.getParameters();
-                        params.setFlashMode(Parameters.FLASH_MODE_TORCH);
-                        camera.setParameters(params);
-                        camera.startPreview();
-
                         int flashTime = Integer.parseInt(tokens[3]);
-                        handler.postDelayed(new Runnable() {
-                            public void run() {
-                                camera.stopPreview();
-                                camera.release();
-                            }
-                        }, flashTime);//falsh is on for flashtime, after it stop the preview
-                        // SystemClock.sleep(10000);
-
-
-                        System.out.println("turn flash on");
-
+                        turnFlashOnFor(flashTime);
                         break;
                     default:
                         Toast.makeText(c, "Action "+tokens[2]+" is not implemented", Toast.LENGTH_SHORT).show();
                         break;
 
                 }
-
 
             }
 
@@ -240,6 +212,45 @@ public class MainActivity extends ListActivity {
 
     }
 
+
+    private void turnFlashOnFor(int time) {
+        camera = Camera.open();
+        params = camera.getParameters();
+        params.setFlashMode(Parameters.FLASH_MODE_TORCH);
+        camera.setParameters(params);
+        camera.startPreview();
+
+
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                camera.stopPreview();
+                camera.release();
+            }
+        }, time);//falsh is on for flashtime, after it stop the preview
+
+    }
+
+    private void playSoundWithName(String soundName){
+        int file=-1;
+        switch (soundName){
+            case "cough1":
+                file=R.raw.cough1;
+
+                break;
+            case "cough2":
+                file=R.raw.cough2;
+                break;
+            default:
+                Toast.makeText(c, "Sound "+soundName+" is not implemented", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        if(file != -1) {
+            mediaPlayer = MediaPlayer.create(MainActivity.this, file);
+            mediaPlayer.start();
+        }
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
