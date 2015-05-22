@@ -3,12 +3,14 @@ package bfh.ch.apodeixis;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-//import android.graphics.Camera;
-import android.graphics.Camera;
-import android.hardware.camera2.*;
+import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
+//import android.hardware.camera2.*;
 import android.location.GpsStatus;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,7 +46,9 @@ public class MainActivity extends ListActivity {
 
     private String device_id = null;
 
-    private CameraDevice camera;
+    private Camera camera;
+    private Parameters params;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,12 +125,24 @@ public class MainActivity extends ListActivity {
                         v.vibrate(vibrationTime);
                         break;
                     case "flashlight":
-/*
-                        android.hardware.Camera.Parameters p = camera.getParameters();
-                        p.setFlashMode(android.hardware.Camera.Parameters.FLASH_MODE_TORCH);
-                        camera.setParameters(p);
+                        camera = Camera.open();
+                        params = camera.getParameters();
+                        params.setFlashMode(Parameters.FLASH_MODE_TORCH);
+                        camera.setParameters(params);
                         camera.startPreview();
-                        */
+
+                        int flashTime = Integer.parseInt(tokens[3]);
+                        handler.postDelayed(new Runnable() {
+                            public void run() {
+                                camera.stopPreview();
+                                camera.release();
+                            }
+                        }, flashTime);//falsh is on for flashtime, after it stop the preview
+                        // SystemClock.sleep(10000);
+
+
+                        System.out.println("turn flash on");
+
                         break;
                     default:
                         Toast.makeText(c, "Action "+tokens[2]+" is not implemented", Toast.LENGTH_SHORT).show();
