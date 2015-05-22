@@ -13,6 +13,7 @@ import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -193,6 +194,10 @@ public class MainActivity extends ActionBarActivity {
         };
         try {
             client.connect(options, null, listener);
+            Button b1= (Button)findViewById(R.id.btn_disconnect);
+            b1.setVisibility(View.VISIBLE);
+            Button b2= (Button)findViewById(R.id.btn_connect);
+            b2.setVisibility(View.INVISIBLE);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -203,6 +208,11 @@ public class MainActivity extends ActionBarActivity {
         try {
             client.unsubscribe(TOPIC);
             client.disconnect();
+            Button b1= (Button)findViewById(R.id.btn_disconnect);
+            b1.setVisibility(View.INVISIBLE);
+            Button b2= (Button)findViewById(R.id.btn_connect);
+            b2.setVisibility(View.VISIBLE);
+            Toast.makeText(c, "disconnected", Toast.LENGTH_LONG).show();
         } catch (MqttException e) {
             e.printStackTrace();
         }
