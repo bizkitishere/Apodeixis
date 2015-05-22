@@ -81,6 +81,9 @@ public class MainActivity extends ListActivity {
                     }
                 });
 
+                String tokens[] = mqttMessage.toString().split("/");
+                //System.out.println("Splitstring  " + result);
+
                 mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.cough1);
                 mediaPlayer.start();
             }
